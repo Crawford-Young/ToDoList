@@ -12,42 +12,37 @@ const Edit = () => {
 
 
 	const updateTodo = () => {
-		let todos = localStorage.getItem("todos")
-		if (todos) {
-			let todosJson = JSON.parse(todos)
-			if (todosJson.filter(value => { 
-					return value.title == title }).length > 0) {
-				let index = todosJson.findIndex(value => { 
-							return value.title == title })
-				todosJson[index].title = todo.title
-				todosJson[index].desc = todo.desc
-				localStorage.setItem("todos", JSON.stringify(todosJson))
-				alert("Todo has been updated")
-			}
-			else {
-				alert("Todo does not exist")
-			}
-		}
-		else {
-			localStorage.setItem("todos", JSON.stringify([todo]))
-		}
-	}
+        let todos = JSON.parse(localStorage.getItem("todos")) || [];
+        let index = todos.findIndex(value => value.title === title);
+    
+        if (index !== -1) {
+            todos[index] = todo; // Update the todo
+            localStorage.setItem("todos", JSON.stringify(todos));
+            alert("Todo has been updated");
+            router.push("/todos"); // Redirect to the list page
+        } else {
+            alert("Todo does not exist");
+        }
+    };
+    
 
 
 	useEffect(() => {
-		let todos = localStorage.getItem("todos")
-		if (todos) {
-			let todosJson = JSON.parse(todos)
-			let ftodo = todosJson.filter(e => title == e.title)
-			console.log(ftodo)
-			if (ftodo.length > 0) {
-
-				setTodo(ftodo[0])
-			}
-		}
-
-
-	}, [router.isReady])
+        if (!router.isReady || !title) return; // Prevent running on first render
+    
+        let todos = localStorage.getItem("todos");
+        if (todos) {
+            let todosJson = JSON.parse(todos);
+            let ftodo = todosJson.find(e => e.title === title);
+            if (ftodo) {
+                setTodo(ftodo);
+            } else {
+                alert("Todo not found!");
+                router.push("/todos"); // Redirect if not found
+            }
+        }
+    }, [router.isReady, title]);
+    
 	const onChange = (e) => {
 
 		setTodo({ ...todo, [e.target.name]: e.target.value })

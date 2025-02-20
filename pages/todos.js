@@ -11,6 +11,7 @@ const todos = () => {
 		} else {
 			setTodos(JSON.parse(todos));
 		}
+    
 	}, []);
 
 	const deleteTodo = (title) => {
